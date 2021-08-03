@@ -1,15 +1,15 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <img id="logo" alt="Vue logo" src="./assets/helm.svg" >
+  <AvailableCharts/>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import AvailableCharts from './components/AvailableCharts.vue'
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    AvailableCharts
   }
 }
 </script>
@@ -22,5 +22,8 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+#logo {
+  width: 150px;
 }
 </style>
