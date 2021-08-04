@@ -5,9 +5,15 @@
     <ul id="array-rendering">
         <li v-for="item in charts" :key="item.id">
             {{ item.name }}
-            <button class="button" style="display:block;margin:auto;" @click="installChart(item)">Install</button>
+            <button class="button" @click="installChart(item)">Install</button>
+            <button class="button" @click="unInstallChart(item)">Uninstall</button>
         </li>
     </ul>
+
+    <button class="button" style="display:block;margin:auto;" @click="clearLog()">Clear log</button>
+    <div class="consolelog">
+        <span v-for="item in console" :key="item">{{item}}</span>
+    </div>
 
   </div>
 
@@ -23,7 +29,8 @@ export default {
   },
   data() {
       return {
-          charts: []
+          charts: [],
+          console:[]
       }
   },
   mounted() {
@@ -34,13 +41,47 @@ export default {
   methods: {
     getCharts: function() {
         console.log("Invoking get charts endpoint");
-        axios.get("/charts")
+        axios.get("http://localhost:8090/charts")
             .then(response => {this.charts = response.data})
     },
+    clearLog: function() {
+        this.console = [];
+    },
+    logMsg: function(msg) {
+        console.log(msg);
+        this.console.push(msg);
+    },
+    logReaderToConsole: function(reader) {
+        const pump = () => reader.read()
+            .then(res => { 
+                if (!res.done) {
+                    this.logMsg(String.fromCharCode.apply(String, res.value));
+                    pump(); 
+                } 
+            });
+
+        pump();
+    },
     installChart: function(item) {
-        console.log("Installing " + item.id);  
-        axios.post("/charts/new", item)
-            .then(response => console.log(response));
+        this.logMsg("Installing chart '" + item.id + "' with name '" + item.name.toLowerCase() + "'");
+        fetch("http://localhost:8090/charts/new", { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(item)
+        })
+        .then(response => response.body)
+        .then(body => this.logReaderToConsole(body.getReader()))
+        .catch(error => {
+            console.log(error);
+        });
+    },
+    unInstallChart: function(item) {
+        fetch("http://localhost:8090/charts/uninstall/" + item.name.toLowerCase(), { method: 'GET' })
+        .then(response => response.body)
+        .then(body => this.logReaderToConsole(body.getReader()))
+        .catch(error => {
+            console.log(error);
+        });
     }
   }
 }
@@ -58,9 +99,18 @@ ul {
 li {
   display: inline-block;
   margin: 0 10px;
+  padding: 5px;
   border: #42b983 1px solid;
+}
+li button {
+  margin: 10px;
+  display: block;
 }
 a {
   color: #42b983;
+}
+.consolelog {
+    color: blue;
+    white-space: pre-line;
 }
 </style>
