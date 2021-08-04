@@ -41,7 +41,7 @@ export default {
   methods: {
     getCharts: function() {
         console.log("Invoking get charts endpoint");
-        axios.get("http://localhost:8090/charts")
+        axios.get("/charts")
             .then(response => {this.charts = response.data})
     },
     clearLog: function() {
@@ -64,7 +64,7 @@ export default {
     },
     installChart: function(item) {
         this.logMsg("Installing chart '" + item.id + "' with name '" + item.name.toLowerCase() + "'");
-        fetch("http://localhost:8090/charts/new", { 
+        fetch("/charts/new", { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(item)
