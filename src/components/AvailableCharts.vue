@@ -76,6 +76,7 @@ export default {
         });
     },
     unInstallChart: function(item) {
+        this.logMsg("Uninstalling chart with name '" + item.name.toLowerCase() + "'");
         fetch("/charts/uninstall/" + item.name.toLowerCase(), { method: 'GET' })
         .then(response => response.body)
         .then(body => this.logReaderToConsole(body.getReader()))
