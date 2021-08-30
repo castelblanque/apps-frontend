@@ -64,7 +64,7 @@ export default {
     },
     installChart: function(item) {
         this.logMsg("Installing chart '" + item.id + "' with name '" + item.name.toLowerCase() + "'");
-        fetch("/charts/new", { 
+        fetch("/charts", { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(item)
