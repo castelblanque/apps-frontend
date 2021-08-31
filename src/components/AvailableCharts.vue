@@ -22,6 +22,8 @@
 <script>
 import axios from 'axios'
 
+const BACKEND_HOST = "";
+
 export default {
   name: 'AvailableCharts',
   props: {
@@ -41,7 +43,7 @@ export default {
   methods: {
     getCharts: function() {
         console.log("Invoking get charts endpoint");
-        axios.get("/charts")
+        axios.get(BACKEND_HOST + "/charts")
             .then(response => {this.charts = response.data})
     },
     clearLog: function() {
@@ -49,7 +51,7 @@ export default {
     },
     logMsg: function(msg) {
         console.log(msg);
-        this.console.push(msg);
+        this.console.push(msg + "\n");
     },
     logReaderToConsole: function(reader) {
         const pump = () => reader.read()
@@ -64,7 +66,7 @@ export default {
     },
     installChart: function(item) {
         this.logMsg("Installing chart '" + item.id + "' with name '" + item.name.toLowerCase() + "'");
-        fetch("/charts", { 
+        fetch(BACKEND_HOST + "/charts", { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(item)
@@ -77,7 +79,7 @@ export default {
     },
     unInstallChart: function(item) {
         this.logMsg("Uninstalling chart with name '" + item.name.toLowerCase() + "'");
-        fetch("/charts/uninstall/" + item.name.toLowerCase(), { method: 'GET' })
+        fetch(BACKEND_HOST + "/charts/uninstall/" + item.name.toLowerCase(), { method: 'GET' })
         .then(response => response.body)
         .then(body => this.logReaderToConsole(body.getReader()))
         .catch(error => {
